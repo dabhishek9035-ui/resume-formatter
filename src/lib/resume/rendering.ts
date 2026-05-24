@@ -15,8 +15,8 @@ export function normalizeLines(value: string) {
     .filter(Boolean);
 }
 
-export function normalizeBullets(values: string[]) {
-  return values.map((value) => clean(value)).filter(Boolean);
+export function normalizeBullets(values?: string[]) {
+  return (values || []).map((value) => clean(value)).filter(Boolean);
 }
 
 export function formatDateRange(startDate: string, endDate: string) {

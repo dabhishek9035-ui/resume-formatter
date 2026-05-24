@@ -40,7 +40,7 @@ export function getAtsAnalysis(resume: ResumeData) {
     resume.experience
       .map((entry) => [entry.title, entry.company, entry.location, entry.bullets.join(' ')].join(' '))
       .join(' '),
-    resume.projects.map((entry) => [entry.name, entry.role, entry.details].join(' ')).join(' '),
+    resume.projects.map((entry) => [entry.name, entry.role, entry.details, (entry.bullets || []).join(' ')].join(' ')).join(' '),
     resume.certifications.map((entry) => [entry.name, entry.issuer].join(' ')).join(' '),
     resume.achievements.map((entry) => entry.text).join(' '),
   ]

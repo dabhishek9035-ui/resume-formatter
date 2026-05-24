@@ -36,6 +36,7 @@ export interface ProjectEntry {
   role: string;
   dateRange: string;
   details: string;
+  bullets: string[];
 }
 
 export interface AttachmentFile {

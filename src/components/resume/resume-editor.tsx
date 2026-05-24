@@ -238,6 +238,37 @@ export function ResumeEditor() {
     }));
   };
 
+  function updateProjectBullet(project: ProjectEntry, index: number, value: string): ProjectEntry {
+    const bullets = [...(project.bullets || [])];
+    bullets[index] = value;
+    return { ...project, bullets };
+  }
+
+  const updateProjectBulletAt = (projectId: string, bulletIndex: number, value: string) => {
+    setResume((current) => ({
+      ...current,
+      projects: current.projects.map((entry) => (entry.id === projectId ? updateProjectBullet(entry, bulletIndex, value) : entry)),
+    }));
+  };
+
+  const addProjectBullet = (projectId: string) => {
+    setResume((current) => ({
+      ...current,
+      projects: current.projects.map((entry) =>
+        entry.id === projectId ? { ...entry, bullets: [...(entry.bullets || []), ''] } : entry
+      ),
+    }));
+  };
+
+  const removeProjectBullet = (projectId: string, bulletIndex: number) => {
+    setResume((current) => ({
+      ...current,
+      projects: current.projects.map((entry) =>
+        entry.id === projectId ? { ...entry, bullets: (entry.bullets || []).filter((_, index) => index !== bulletIndex) } : entry
+      ),
+    }));
+  };
+
   const addCustomSection = () => {
     setResume((current) => ({
       ...current,
@@ -292,6 +323,7 @@ export function ResumeEditor() {
           role: '',
           dateRange: '',
           details: '',
+          bullets: [''],
         },
       ],
     }));
@@ -414,13 +446,13 @@ export function ResumeEditor() {
             </div>
           </header>
 
-          <div className="grid gap-5 lg:grid-cols-2">
-            <div className="space-y-4">
+          <div className="space-y-6">
+            <section className="space-y-4">
               <SectionLabel>Personal Info</SectionLabel>
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                 <Field label="Full Name">
                   <input
-                    className={cn(inputClassName(), 'sm:col-span-2')}
+                    className="h-10 w-full border border-border bg-background px-3 text-sm text-foreground outline-none transition focus:border-foreground sm:col-span-2 xl:col-span-3"
                     value={resume.personalInfo.fullName}
                     onChange={(event) => updatePersonalInfo('fullName', event.target.value)}
                   />
@@ -462,38 +494,40 @@ export function ResumeEditor() {
                 </Field>
                 <Field label="LinkedIn">
                   <input
-                    className="h-10 w-full border border-border bg-background px-3 text-sm text-foreground outline-none transition focus:border-foreground sm:col-span-2"
+                    className="h-10 w-full border border-border bg-background px-3 text-sm text-foreground outline-none transition focus:border-foreground sm:col-span-2 xl:col-span-3"
                     value={resume.personalInfo.linkedin}
                     onChange={(event) => updatePersonalInfo('linkedin', event.target.value)}
                   />
                 </Field>
               </div>
-            </div>
+            </section>
 
-            <div className="space-y-4">
+            <section className="space-y-4 rounded-none border border-border bg-background/30 p-4 sm:p-5">
               <SectionLabel>Professional Summary</SectionLabel>
-              <Field label="Summary">
-                <textarea
-                  className={textareaClassName()}
-                  value={resume.summary}
-                  onChange={(event) => setResume((current) => ({ ...current, summary: event.target.value }))}
-                />
-              </Field>
-              <Field label="Skills">
-                <textarea
-                  className={textareaClassName()}
-                  value={skillsText}
-                  onChange={(event) => {
-                    const nextValue = event.target.value;
-                    setSkillsText(nextValue);
-                    setResume((current) => ({
-                      ...current,
-                      skills: parseSkillsText(nextValue),
-                    }));
-                  }}
-                />
-              </Field>
-            </div>
+              <div className="grid gap-4 lg:grid-cols-2">
+                <Field label="Summary">
+                  <textarea
+                    className={textareaClassName()}
+                    value={resume.summary}
+                    onChange={(event) => setResume((current) => ({ ...current, summary: event.target.value }))}
+                  />
+                </Field>
+                <Field label="Skills">
+                  <textarea
+                    className={textareaClassName()}
+                    value={skillsText}
+                    onChange={(event) => {
+                      const nextValue = event.target.value;
+                      setSkillsText(nextValue);
+                      setResume((current) => ({
+                        ...current,
+                        skills: parseSkillsText(nextValue),
+                      }));
+                    }}
+                  />
+                </Field>
+              </div>
+            </section>
           </div>
 
           <div className="space-y-4">
@@ -584,7 +618,7 @@ export function ResumeEditor() {
                       </Button>
                     </div>
                     <div className="space-y-3">
-                      {entry.bullets.map((bullet, bulletIndex) => (
+                        {(entry.bullets || []).map((bullet, bulletIndex) => (
                         <div key={`${entry.id}-${bulletIndex}`} className="flex gap-3">
                           <textarea
                             className={cn(textareaClassName(), 'min-h-16 flex-1')}
@@ -609,8 +643,8 @@ export function ResumeEditor() {
             </div>
           </div>
 
-          <div className="grid gap-6 lg:grid-cols-2">
-            <div className="space-y-4">
+          <div className="grid gap-6 lg:grid-cols-[1.4fr_0.6fr]">
+            <div className="col-span-2 w-full space-y-4">
               <div className="flex items-center justify-between gap-4">
                 <SectionLabel>Projects</SectionLabel>
                 <Button type="button" variant="outline" size="sm" onClick={addProject}>
@@ -619,7 +653,7 @@ export function ResumeEditor() {
               </div>
               <div className="space-y-4">
                 {resume.projects.map((entry, index) => (
-                  <article key={entry.id} className="space-y-4 border border-border p-4">
+                  <article key={entry.id} className="space-y-4 border border-border p-6">
                     <div className="flex items-center justify-between gap-4">
                       <p className="text-xs font-medium uppercase tracking-[0.22em] text-muted-foreground">
                         Project {index + 1}
@@ -628,7 +662,7 @@ export function ResumeEditor() {
                         Remove
                       </Button>
                     </div>
-                    <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="grid gap-6 sm:grid-cols-2">
                       <Field label="Project Name">
                         <input className={inputClassName()} value={entry.name} onChange={(event) => updateProject(entry.id, 'name', event.target.value)} />
                       </Field>
@@ -638,16 +672,35 @@ export function ResumeEditor() {
                       <Field label="Date Range">
                         <input className={inputClassName()} value={entry.dateRange} onChange={(event) => updateProject(entry.id, 'dateRange', event.target.value)} />
                       </Field>
-                      <Field label="Details">
-                        <textarea className={textareaClassName()} value={entry.details} onChange={(event) => updateProject(entry.id, 'details', event.target.value)} />
-                      </Field>
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between gap-4">
+                          <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-muted-foreground">Bullet points</p>
+                          <Button type="button" variant="outline" size="sm" onClick={() => addProjectBullet(entry.id)}>
+                            Add bullet
+                          </Button>
+                        </div>
+                        <div className="w-full space-y-3">
+                          {(entry.bullets || []).map((bullet, bulletIndex) => (
+                            <div key={`${entry.id}-${bulletIndex}`} className="w-full space-y-2">
+                              <textarea
+                                className={cn(textareaClassName(), 'w-full min-w-0 resize-y')}
+                                value={bullet}
+                                onChange={(event) => updateProjectBulletAt(entry.id, bulletIndex, event.target.value)}
+                              />
+                              <Button type="button" variant="ghost" size="sm" onClick={() => removeProjectBullet(entry.id, bulletIndex)}>
+                                Remove
+                              </Button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     </div>
                   </article>
                 ))}
               </div>
             </div>
 
-            <div className="space-y-4">
+            <div className="col-span-2 w-full space-y-4">
               <div className="flex items-center justify-between gap-4">
                 <SectionLabel>Certifications</SectionLabel>
                 <Button type="button" variant="outline" size="sm" onClick={addCertification}>
@@ -679,83 +732,83 @@ export function ResumeEditor() {
                   </article>
                 ))}
               </div>
+            </div>
 
+            <div className="col-span-2 w-full space-y-4">
+              <div className="flex items-center justify-between gap-4">
+                <SectionLabel>Achievements</SectionLabel>
+                <Button type="button" variant="outline" size="sm" onClick={addAchievement}>
+                  Add achievement
+                </Button>
+              </div>
               <div className="space-y-4">
-                <div className="flex items-center justify-between gap-4">
-                  <SectionLabel>Achievements</SectionLabel>
-                  <Button type="button" variant="outline" size="sm" onClick={addAchievement}>
-                    Add achievement
-                  </Button>
-                </div>
+                {resume.achievements.map((entry, index) => (
+                  <article key={entry.id} className="space-y-4 border border-border p-4">
+                    <div className="flex items-center justify-between gap-4">
+                      <p className="text-xs font-medium uppercase tracking-[0.22em] text-muted-foreground">
+                        Achievement {index + 1}
+                      </p>
+                      <Button type="button" variant="ghost" size="sm" onClick={() => removeAchievement(entry.id)}>
+                        Remove
+                      </Button>
+                    </div>
+                    <Field label="Achievement text">
+                      <textarea
+                        className={textareaClassName()}
+                        value={entry.text}
+                        onChange={(event) => updateAchievement(entry.id, event.target.value)}
+                      />
+                    </Field>
+                  </article>
+                ))}
+              </div>
+            </div>
 
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between gap-4">
-                    <SectionLabel>Custom Sections</SectionLabel>
-                    <Button type="button" variant="outline" size="sm" onClick={addCustomSection}>
-                      Add section
-                    </Button>
-                  </div>
-                  <div className="space-y-4">
-                    {(resume.customSections ?? []).map((section, index) => (
-                      <article key={section.id} className="space-y-4 border border-border p-4">
-                        <div className="flex items-center justify-between gap-4">
-                          <p className="text-xs font-medium uppercase tracking-[0.22em] text-muted-foreground">Section {index + 1}</p>
-                          <Button type="button" variant="ghost" size="sm" onClick={() => removeCustomSection(section.id)}>
-                            Remove
-                          </Button>
-                        </div>
-                        <div className="grid gap-4 sm:grid-cols-2">
-                          <Field label="Label">
-                            <input className={inputClassName()} value={section.label} onChange={(e) => updateCustomSection(section.id, 'label', e.target.value)} />
-                          </Field>
-                          <Field label="Type">
-                            <select className={inputClassName()} value={section.type} onChange={(e) => updateCustomSection(section.id, 'type', e.target.value as CustomSectionEntry['type'])}>
-                              <option value="text">Text</option>
-                              <option value="image">Image</option>
-                              <option value="files">Files</option>
-                            </select>
-                          </Field>
-                          {section.type === 'text' ? (
-                            <Field label="Content">
-                              <textarea className={textareaClassName()} value={section.text || ''} onChange={(e) => updateCustomSection(section.id, 'text', e.target.value)} />
-                            </Field>
-                          ) : null}
-                          {section.type === 'image' ? (
-                            <Field label="Image">
-                              <input type="file" accept="image/*" className={inputClassName()} onChange={(e) => handleCustomFiles(section.id, e.target.files)} />
-                            </Field>
-                          ) : null}
-                          {section.type === 'files' ? (
-                            <Field label="Files">
-                              <input type="file" multiple className={inputClassName()} onChange={(e) => handleCustomFiles(section.id, e.target.files)} />
-                            </Field>
-                          ) : null}
-                        </div>
-                      </article>
-                    ))}
-                  </div>
-                </div>
-                <div className="space-y-4">
-                  {resume.achievements.map((entry, index) => (
-                    <article key={entry.id} className="space-y-4 border border-border p-4">
-                      <div className="flex items-center justify-between gap-4">
-                        <p className="text-xs font-medium uppercase tracking-[0.22em] text-muted-foreground">
-                          Achievement {index + 1}
-                        </p>
-                        <Button type="button" variant="ghost" size="sm" onClick={() => removeAchievement(entry.id)}>
-                          Remove
-                        </Button>
-                      </div>
-                      <Field label="Achievement text">
-                        <textarea
-                          className={textareaClassName()}
-                          value={entry.text}
-                          onChange={(event) => updateAchievement(entry.id, event.target.value)}
-                        />
+            <div className="col-span-2 w-full space-y-4">
+              <div className="flex items-center justify-between gap-4">
+                <SectionLabel>Custom Sections</SectionLabel>
+                <Button type="button" variant="outline" size="sm" onClick={addCustomSection}>
+                  Add section
+                </Button>
+              </div>
+              <div className="space-y-4">
+                {(resume.customSections ?? []).map((section, index) => (
+                  <article key={section.id} className="space-y-4 border border-border p-4">
+                    <div className="flex items-center justify-between gap-4">
+                      <p className="text-xs font-medium uppercase tracking-[0.22em] text-muted-foreground">Section {index + 1}</p>
+                      <Button type="button" variant="ghost" size="sm" onClick={() => removeCustomSection(section.id)}>
+                        Remove
+                      </Button>
+                    </div>
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      <Field label="Label">
+                        <input className={inputClassName()} value={section.label} onChange={(e) => updateCustomSection(section.id, 'label', e.target.value)} />
                       </Field>
-                    </article>
-                  ))}
-                </div>
+                      <Field label="Type">
+                        <select className={inputClassName()} value={section.type} onChange={(e) => updateCustomSection(section.id, 'type', e.target.value as CustomSectionEntry['type'])}>
+                          <option value="text">Text</option>
+                          <option value="image">Image</option>
+                          <option value="files">Files</option>
+                        </select>
+                      </Field>
+                      {section.type === 'text' ? (
+                        <Field label="Content">
+                          <textarea className={textareaClassName()} value={section.text || ''} onChange={(e) => updateCustomSection(section.id, 'text', e.target.value)} />
+                        </Field>
+                      ) : null}
+                      {section.type === 'image' ? (
+                        <Field label="Image">
+                          <input type="file" accept="image/*" className={inputClassName()} onChange={(e) => handleCustomFiles(section.id, e.target.files)} />
+                        </Field>
+                      ) : null}
+                      {section.type === 'files' ? (
+                        <Field label="Files">
+                          <input type="file" multiple className={inputClassName()} onChange={(e) => handleCustomFiles(section.id, e.target.files)} />
+                        </Field>
+                      ) : null}
+                    </div>
+                  </article>
+                ))}
               </div>
             </div>
           </div>

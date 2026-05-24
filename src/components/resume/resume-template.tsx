@@ -37,7 +37,7 @@ export function ResumeTemplate({ resume }: { resume: ResumeData }) {
   );
   const hasSkills = normalizeBullets(resume.skills).length > 0;
   const hasProjects = resume.projects.some(
-    (entry) => [entry.name, entry.role, entry.dateRange, entry.details].some(hasText)
+    (entry) => [entry.name, entry.role, entry.dateRange, entry.details].some(hasText) || normalizeBullets(entry.bullets).length > 0
   );
   const hasCertifications = resume.certifications.some((entry) => [entry.name, entry.issuer, entry.date].some(hasText));
   const hasAchievements = resume.achievements.some((entry) => hasText(entry.text));
@@ -157,14 +157,24 @@ export function ResumeTemplate({ resume }: { resume: ResumeData }) {
       <section key="projects" className="space-y-3">
         <h4 className="text-[18px] font-bold uppercase tracking-[0.08em] text-black">Projects</h4>
         <div className="space-y-3">
-          {resume.projects
-            .filter((entry) => [entry.name, entry.role, entry.dateRange, entry.details].some(hasText))
+            {resume.projects
+            .filter((entry) => [entry.name, entry.role, entry.dateRange, entry.details].some(hasText) || normalizeBullets(entry.bullets).length > 0)
             .map((entry) => (
-              <article key={entry.id}>
+              <article key={entry.id} className="space-y-1">
                 {hasText(entry.name) ? <p className="text-[13px] font-semibold text-black">{entry.name}</p> : null}
                 {hasText(entry.role) ? <p className="text-[13px] italic text-black/75">{entry.role}</p> : null}
                 {hasText(entry.dateRange) ? <p className="text-[12px] uppercase tracking-[0.12em] text-black/70">{entry.dateRange}</p> : null}
                 {hasText(entry.details) ? <p className="text-[12px] text-black/80">{entry.details}</p> : null}
+                {normalizeBullets(entry.bullets).length > 0 ? (
+                  <ul className="space-y-1 pt-1">
+                    {normalizeBullets(entry.bullets).map((bullet, index) => (
+                      <li key={`${entry.id}-${index}`} className="flex gap-2">
+                        <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-black" />
+                        <span className="text-[12px]">{bullet}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
               </article>
             ))}
         </div>

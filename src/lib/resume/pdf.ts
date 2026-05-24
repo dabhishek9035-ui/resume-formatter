@@ -148,7 +148,7 @@ export function buildResumePdfHtml(resume: ResumeData) {
     .map((s) => {
       if (s.type === 'text') {
         return `
-          <article>
+          <article class="section-block">
             <div class="title">${escapeHtml(s.label)}</div>
             <div class="details">${escapeHtml(s.text || '')}</div>
           </article>
@@ -173,7 +173,7 @@ export function buildResumePdfHtml(resume: ResumeData) {
           .map((f) => `<div><a href="${f.dataUrl}" download="${escapeHtml(f.name)}">${escapeHtml(f.name)}</a></div>`)
           .join('');
         return `
-          <article>
+          <article class="section-block">
             <div class="title">${escapeHtml(s.label)}</div>
             <div class="details">${links}</div>
           </article>
@@ -266,7 +266,7 @@ export function buildResumePdfHtml(resume: ResumeData) {
           .section { margin-top: 0; }
           .section-title { margin: 0 0 6px; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.22em; }
           .summary { font-size: 10.5px; }
-          .section-block { margin-bottom: 8px; break-inside: avoid; page-break-inside: avoid; }
+          .section-block { margin-bottom: 12px; break-inside: avoid; page-break-inside: avoid; }
           .row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
           .title { font-size: 11px; font-weight: 700; }
           .subtitle { font-style: italic; color: rgba(0,0,0,.75); }
@@ -275,7 +275,7 @@ export function buildResumePdfHtml(resume: ResumeData) {
           .details { margin-top: 1px; white-space: pre-line; }
           .details img { display: block; margin-top: 6px; max-width: 100%; height: auto; }
           .bullet-list { list-style: none; margin: 4px 0 0; padding: 0; }
-          .bullet-item { display: flex; gap: 5px; margin: 1px 0; }
+          .bullet-item { display: flex; gap: 5px; margin: 6px 0; }
           .bullet { width: 3px; height: 3px; border-radius: 999px; background: #000; flex: 0 0 auto; margin-top: 6px; }
           .section-stack { display: flex; flex-direction: column; gap: 10px; }
           .skills { font-size: 10.5px; white-space: pre-line; }
