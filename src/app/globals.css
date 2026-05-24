@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 40 33% 97%;
+  --foreground: 222 30% 11%;
+  --card: 0 0% 100%;
+  --card-foreground: 222 30% 11%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 30% 11%;
+  --primary: 222 30% 11%;
+  --primary-foreground: 210 40% 98%;
+  --secondary: 36 12% 92%;
+  --secondary-foreground: 222 30% 11%;
+  --muted: 36 12% 94%;
+  --muted-foreground: 215 16% 40%;
+  --accent: 36 18% 89%;
+  --accent-foreground: 222 30% 11%;
+  --border: 40 12% 84%;
+  --input: 40 12% 84%;
+  --ring: 222 30% 11%;
+}
+
+* {
+  @apply border-border;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-background text-foreground antialiased;
+  font-feature-settings: 'liga' 1, 'kern' 1, 'ss01' 1;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading), Georgia, serif;
+  letter-spacing: -0.015em;
+}
+
+.resume-divider {
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(90deg, transparent, hsl(var(--border)), transparent);
+}
