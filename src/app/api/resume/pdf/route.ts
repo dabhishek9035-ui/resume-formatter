@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { existsSync } from 'node:fs';
 import puppeteer from 'puppeteer';
 import { defaultResumeData } from '@/lib/resume/default-resume';
 import { buildResumePdfHtml } from '@/lib/resume/pdf';
@@ -17,7 +18,7 @@ function getChromeExecutablePath() {
 
   return candidates.find((candidate) => {
     try {
-      return require('node:fs').existsSync(candidate);
+      return existsSync(candidate);
     } catch {
       return false;
     }

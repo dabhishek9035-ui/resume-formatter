@@ -1,8 +1,8 @@
 import type { ResumeData } from './types';
 import { formatContactLine, formatDateRange, formatEducationLine, formatSkillsLine, normalizeBullets } from './rendering';
 
-function hasText(value: string) {
-  return value.trim().length > 0;
+function hasText(value: string | undefined) {
+  return (value ?? '').trim().length > 0;
 }
 
 function escapeHtml(value: string) {

@@ -8,6 +8,7 @@ import { ResumeTemplate } from '@/components/resume/resume-template';
 import type {
   AchievementEntry,
   CertificationEntry,
+  CustomSectionEntry,
   EducationEntry,
   ExperienceEntry,
   ProjectEntry,
@@ -247,7 +248,18 @@ export function ResumeEditor() {
     }));
   };
 
-  const updateCustomSection = (id: string, key: keyof any, value: any) => {
+  type CustomSectionFieldMap = {
+    label: string;
+    type: CustomSectionEntry['type'];
+    text: string;
+    files: CustomSectionEntry['files'];
+  };
+
+  const updateCustomSection = <K extends keyof CustomSectionFieldMap>(
+    id: string,
+    key: K,
+    value: CustomSectionFieldMap[K]
+  ) => {
     setResume((current) => ({
       ...current,
       customSections: current.customSections.map((entry) => (entry.id === id ? { ...entry, [key]: value } : entry)),
@@ -697,7 +709,7 @@ export function ResumeEditor() {
                             <input className={inputClassName()} value={section.label} onChange={(e) => updateCustomSection(section.id, 'label', e.target.value)} />
                           </Field>
                           <Field label="Type">
-                            <select className={inputClassName()} value={section.type} onChange={(e) => updateCustomSection(section.id, 'type', e.target.value)}>
+                            <select className={inputClassName()} value={section.type} onChange={(e) => updateCustomSection(section.id, 'type', e.target.value as CustomSectionEntry['type'])}>
                               <option value="text">Text</option>
                               <option value="image">Image</option>
                               <option value="files">Files</option>
